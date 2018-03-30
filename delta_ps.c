@@ -28,7 +28,7 @@ int main(int argc, char ** argv){
   fftwf_plan planH;
   float k_x, k_y, k_z, k_mag, k_floor, k_ceil, k_max, k_first_bin_ceil, k_factor;
   int i,j,k, n_x, n_y, n_z, NUM_BINS;
-  double dvdx, ave, aveH, new_ave, new_aveH, *p_box, *pimag_box, *k_ave;
+  double dvdx, ave, aveH, new_ave, new_aveH, *p_box, *pimag_box, *k_ave, *ptest_box;
   unsigned long long ct, *in_bin_ct;
 
   // check arguments
@@ -44,13 +44,16 @@ int main(int argc, char ** argv){
   }
   fftwf_plan_with_nthreads(NUMCORES); // use all processors for init
 
+  //P: TWO AVERAGE TEMPS
   ave=0;
   aveH=0;
+
   //allocate and read-in the density array
   //P: I NEED ANOTHER ONE OF THIS.
   deltax = (fftwf_complex *) fftwf_malloc(sizeof(fftwf_complex)*HII_KSPACE_NUM_PIXELS);
   deltaxH = (fftwf_complex *) fftwf_malloc(sizeof(fftwf_complex)*HII_KSPACE_NUM_PIXELS);
   //P: I GUESS I CAN ALSO KEEP THE ERRORS FOR BOTH BOXES.
+
   if (!deltax){
     fprintf(stderr, "delta_T: Error allocating memory for deltax box\nAborting...\n");
     fftwf_cleanup_threads(); return -1;
@@ -204,6 +207,7 @@ int main(int argc, char ** argv){
 
   p_box =  (double *)malloc(sizeof(double)*NUM_BINS);
   pimag_box = (double *)malloc(sizeof(double)*NUM_BINS);
+  ptest_box = (double *)malloc(sizeof(double)*NUM_BINS);
   k_ave =  (double *)malloc(sizeof(double)*NUM_BINS);
   in_bin_ct = (unsigned long long *)malloc(sizeof(unsigned long long)*NUM_BINS);
 
@@ -246,27 +250,36 @@ int main(int argc, char ** argv){
 	k_floor = 0;
 	k_ceil = k_first_bin_ceil;
 
-        fprintf(stderr, "Done to kmag\n");
 	while (k_ceil < k_max){
 	  // check if we fall in this bin
 	  if ((k_mag>=k_floor) && (k_mag < k_ceil)){
 	    in_bin_ct[ct]++;
- 	    //P: NEED TO FIND OUT HOW TO MULTIPLY BY COMPLEX ONE. 
-	    //p_box[ct] += pow(k_mag,3)*(deltax[HII_C_INDEX(n_x, n_y, n_z)]*(creal(deltaxH[HII_C_INDEX(n_x, n_y, n_z)]) - cimag( )
+ 	    //P: NEED TO FIND OUT HOW TO MULTIPLY BY COMPLEX ONE
+	    //P: STORE REAL PART IN PBOX, DO NOT STORE IMAGINARY PART BECAUSE INTEGRATING OVER HALF
+
+	    p_box[ct] += pow(k_mag,3)*(creal(deltax[HII_C_INDEX(n_x, n_y, n_z)])*creal(deltaxH[HII_C_INDEX(n_x, n_y, n_z)]) + cimag(deltax[HII_C_INDEX(n_x, n_y, n_z)])*cimag(deltaxH[HII_C_INDEX(n_x, n_y, n_z)]))/(2.0*PI*PI*VOLUME); 
+	    
+	    pimag_box[ct] += pow(k_mag,3)*pow(cabs(deltax[HII_C_INDEX(n_x, n_y, n_z)]), 2) / (2.0*PI*PI*VOLUME);
+
 	    //p_box[ct] += pow(k_mag,3)*(creal(deltax[HII_C_INDEX(n_x, n_y, n_z)])*creal(deltaxH[HII_C_INDEX(n_x, n_y, n_z)]) + cimag(deltax[HII_C_INDEX(n_x, n_y, n_z)])*cimag(deltaxH[HII_C_INDEX(n_x, n_y, n_z)]) + I*(cimag(deltax[HII_C_INDEX(n_x, n_y, n_z)])*creal(deltaxH[HII_C_INDEX(n_x, n_y, n_z)]) - creal(deltax[HII_C_INDEX(n_x, n_y, n_z)])*cimag(deltaxH[HII_C_INDEX(n_x, n_y, n_z)])))/(2.0*PI*PI*VOLUME);
-	    p_box[ct] += pow(k_mag,3)*(creal(deltax[HII_C_INDEX(n_x, n_y, n_z)])*creal(deltaxH[HII_C_INDEX(n_x, n_y, n_z)]) + cimag(deltax[HII_C_INDEX(n_x, n_y, n_z)])*cimag(deltaxH[HII_C_INDEX(n_x, n_y, n_z)]))/(2.0*PI*PI*VOLUME);
+	    
+	    //p_box[ct] += pow(k_mag,3)*(creal(deltax[HII_C_INDEX(n_x, n_y, n_z)])*creal(deltaxH[HII_C_INDEX(n_x, n_y, n_z)]) + cimag(deltax[HII_C_INDEX(n_x, n_y, n_z)])*cimag(deltaxH[HII_C_INDEX(n_x, n_y, n_z)]))/(2.0*PI*PI*VOLUME);
 
 
-            fprintf(stderr,"Did real pbox\n");
-	    pimag_box[ct] += pow(k_mag,3)*(cimag(deltax[HII_C_INDEX(n_x, n_y, n_z)])*creal(deltaxH[HII_C_INDEX(n_x, n_y, n_z)]) - creal(deltax[HII_C_INDEX(n_x, n_y, n_z)])*cimag(deltaxH[HII_C_INDEX(n_x, n_y, n_z)]))/(2.0*PI*PI*VOLUME);
-	    //p_box[ct] +=  pow(k_mag,3)*pow(cabs(deltax[HII_C_INDEX(n_x, n_y, n_z)]), 2) / (2.0*PI*PI*VOLUME);
+            //pimag_box[ct] += pow(k_mag,3)*(cimag(deltax[HII_C_INDEX(n_x, n_y, n_z)])*creal(deltaxH[HII_C_INDEX(n_x, n_y, n_z)]) - creal(deltax[HII_C_INDEX(n_x, n_y, n_z)])*cimag(deltaxH[HII_C_INDEX(n_x, n_y, n_z)]))/(2.0*PI*PI*VOLUME);
+	   
+	    //p_box[ct] +=  pow(k_mag,3)*pow(cabs(deltax[HII_C_INDEX(n_x, n_y, n_z)]), 2) / (2.0*PI*PI*VOLUME); -> P: THIS IS THE ORIGINAL
+
+	    //pimag_box[ct] += pow(k_mag,3)*(deltax[0]*deltax[0] + deltax[1]*deltax[1]) / (2.0*PI*PI*VOLUME); -> P: THIS DID NOT WORK
+
+	    //ptest_box[ct] += pow(k_mag,3)*(creal(deltax[HII_C_INDEX(n_x,n_y,n_z)])*creal(deltax[HII_C_INDEX(n_x,n_y,n_z)]) + cimag(deltax[HII_C_INDEX(n_x,n_y,n_z)])*cimag(deltax[HII_C_INDEX(n_x,n_y,n_z)])) / (2.0*PI*PI*VOLUME); -> P: THE TEST WAS PERFECT
+
 	    // note the 1/VOLUME factor, which turns this into a power density in k-space
 
 	    //P: I THOUGHT BECAUSE OF PARITY THIS CROSS POWER SPECTRUM WAS SUPPOSED TO BE REAL
 	    //P: QUITE WEIRD STUFF, MAKE SURE TO RUN WITH BOXES OF SAME REDSHIFT
 
-            fprintf(stderr, "Did pimag box?\n");
-	    k_ave[ct] += k_mag;
+            k_ave[ct] += k_mag;
 	    break;
 	  }
 
@@ -274,7 +287,6 @@ int main(int argc, char ** argv){
 	  k_floor=k_ceil;
 	  k_ceil*=k_factor;
 
-          fprintf(stderr, "Getting ready for next cycle\n");
 	}
       }
     }
@@ -291,13 +303,14 @@ int main(int argc, char ** argv){
 
   fprintf(stderr, "Preparing to print final po\n");
   for (ct=1; ct<NUM_BINS; ct++){
+ //   fprintf(F, "%e\t%e\t%e\t%e\t%e\n", k_ave[ct]/(in_bin_ct[ct]+0.0), p_box[ct]/(in_bin_ct[ct]+0.0), pimag_box[ct]/(in_bin_ct[ct]+0.0), ptest_box[ct]/(in_bin_ct[ct]+0.0), p_box[ct]/(in_bin_ct[ct]+0.0)/sqrt(in_bin_ct[ct]+0.0));
     fprintf(F, "%e\t%e\t%e\t%e\n", k_ave[ct]/(in_bin_ct[ct]+0.0), p_box[ct]/(in_bin_ct[ct]+0.0), pimag_box[ct]/(in_bin_ct[ct]+0.0), p_box[ct]/(in_bin_ct[ct]+0.0)/sqrt(in_bin_ct[ct]+0.0));
   }
   fclose(F);
 
   /****** END POWER SPECTRUM STUFF   ************/
 
-  free(p_box); free(k_ave); free(in_bin_ct); free(pimag_box);
+  free(p_box); free(k_ave); free(in_bin_ct); free(pimag_box); free(ptest_box);
 
   fftwf_cleanup_threads(); return 0;
 }
