@@ -3,7 +3,7 @@
 #include <complex.h>
 
 /*
-  USAGE: delta_ps <deltax filename> <xH filename>? <output filename>
+  USAGE: delta_ps <deltax filename> <xH filename> <output filename> <redshift of box>
 
   box is assumed to be of the HII dimension defined in ANAL_PARAM.H
 
@@ -33,8 +33,8 @@ int main(int argc, char ** argv){
 
   // check arguments
   // P: ADDING ANOTHER ARGUMENT HERE FOR THE NEW BOX.
-  if (argc != 4){
-    fprintf(stderr, "USAGE: delta_ps <deltax filename> <xH filename> <output filename>\nAborting\n");
+  if (argc != 5){
+    fprintf(stderr, "USAGE: delta_ps <deltax filename> <xH filename> <output filename> <redshift of box>\nAborting\n");
     return -1;
   }
   // initialize and allocate thread info
@@ -47,6 +47,9 @@ int main(int argc, char ** argv){
   //P: TWO AVERAGE TEMPS
   ave=0;
   aveH=0;
+
+  //P: REDSHIFT OF BOX FOR CONVENIENCE
+  double redz =  strtod(argv[4], NULL);
 
   //allocate and read-in the density array
   //P: I NEED ANOTHER ONE OF THIS.
@@ -304,7 +307,7 @@ int main(int argc, char ** argv){
   fprintf(stderr, "Preparing to print final po\n");
   for (ct=1; ct<NUM_BINS; ct++){
  //   fprintf(F, "%e\t%e\t%e\t%e\t%e\n", k_ave[ct]/(in_bin_ct[ct]+0.0), p_box[ct]/(in_bin_ct[ct]+0.0), pimag_box[ct]/(in_bin_ct[ct]+0.0), ptest_box[ct]/(in_bin_ct[ct]+0.0), p_box[ct]/(in_bin_ct[ct]+0.0)/sqrt(in_bin_ct[ct]+0.0));
-    fprintf(F, "%e\t%e\t%e\t%e\n", k_ave[ct]/(in_bin_ct[ct]+0.0), p_box[ct]/(in_bin_ct[ct]+0.0), pimag_box[ct]/(in_bin_ct[ct]+0.0), p_box[ct]/(in_bin_ct[ct]+0.0)/sqrt(in_bin_ct[ct]+0.0));
+    fprintf(F, "%e\t%e\t%e\t%e\t%e\n", redz, k_ave[ct]/(in_bin_ct[ct]+0.0), p_box[ct]/(in_bin_ct[ct]+0.0), pimag_box[ct]/(in_bin_ct[ct]+0.0), p_box[ct]/(in_bin_ct[ct]+0.0)/sqrt(in_bin_ct[ct]+0.0));
   }
   fclose(F);
 

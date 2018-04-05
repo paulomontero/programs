@@ -148,8 +148,9 @@ plt.show()
 #dpsi = 0.0715296
 delta_z = 0.14
 redshift_test = 5.90
-k_test = 0.0977
+#k_test = 0.0977
 
+k_test = 0.0977/2
 
 
 #37 in range for zmax = 11
