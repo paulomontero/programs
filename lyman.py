@@ -5,6 +5,8 @@ from scipy.integrate import quad
 from scipy.interpolate import interp2d
 from scipy.interpolate import interp1d
 from scipy import optimize
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from scipy import interpolate
 
@@ -37,7 +39,8 @@ def Dratio(z_obs,z):
 print Dratio(1, 21)
 
 #load 21cmfast realization 
-table = np.loadtxt('power_default1')
+table = np.loadtxt('power_pop3_1')
+#table = np.loadtxt('power_pop3_2')
 
 p_mxh   = table[:,2]
 print p_mxh
@@ -64,8 +67,8 @@ print crosspower_mxh
 #important: z1 = 2.0, z2 =2.5, z3=3.0, z4=3.5, z5=4.0
 #time to deal with the bias representative, do a piecewise linear guy.
 #start with data from zobs = 2.5
-x = np.array([6, 7, 8, 9, 10, 11], dtype = float)
-y_z2 = np.array([0.05903, 0.01993, 0, -0.002998, 0.001291, 0.006988], dtype = float)
+x = np.array([6, 7, 8, 9, 10, 11, 12], dtype = float)
+y_z2 = np.array([0.05903, 0.01993, 0, -0.002998, 0.001291, 0.006988, 0.009932], dtype = float)
 
 tck_z2 = interpolate.splrep(x, y_z2, k=1, s=0)
 xnew = np.linspace(5.9,34.7)
@@ -78,10 +81,10 @@ axes[1].plot(xnew, interpolate.splev(xnew, tck_z2, der = 1), label = '1st dev')
 for ax in axes:
 	ax.legend(loc = 'best')
 
-plt.show()
+#plt.show()
 
 #next the others dpsi  guys, zobs = 2.0
-y_z1 = np.array([0.05621, 0.01945, 0, -0.008235, -0.01222, -0.01311], dtype = float)
+y_z1 = np.array([0.05621, 0.01945, 0, -0.008235, -0.01222, -0.01311, -0.01468], dtype = float)
 
 tck_z1 = interpolate.splrep(x, y_z1, k=1, s=0)
 
@@ -93,10 +96,10 @@ axes[1].plot(xnew, interpolate.splev(xnew, tck_z1, der = 1), label = '1st dev')
 for ax in axes:
 	ax.legend(loc = 'best')
 
-plt.show()
+#plt.show()
 
 #next the others dpsi  guys zobs = 3.0
-y_z3 = np.array([0.08588, 0.03052, 0, -0.006657, -0.001757, 0.005913], dtype = float)
+y_z3 = np.array([0.08588, 0.03052, 0, -0.006657, -0.001757, 0.005913, 0.01350], dtype = float)
 
 tck_z3 = interpolate.splrep(x, y_z3, k=1, s=0)
 
@@ -108,11 +111,11 @@ axes[1].plot(xnew, interpolate.splev(xnew, tck_z3, der = 1), label = '1st dev')
 for ax in axes:
 	ax.legend(loc = 'best')
 
-plt.show()
+#plt.show()
 
 
 #next the others dpsi  guys zobs = 3.5
-y_z4 = np.array([0.13705, 0.05318, 0, -0.02108, -0.02326, -0.01762], dtype = float)
+y_z4 = np.array([0.13705, 0.05318, 0, -0.02108, -0.02326, -0.01762, -0.01140], dtype = float)
 
 tck_z4 = interpolate.splrep(x, y_z4, k=1, s=0)
 
@@ -124,11 +127,11 @@ axes[1].plot(xnew, interpolate.splev(xnew, tck_z4, der = 1), label = '1st dev')
 for ax in axes:
 	ax.legend(loc = 'best')
 
-plt.show()
+#plt.show()
 
 
 #next the others dpsi  guys zobs = 4.0
-y_z5 = np.array([0.21727, 0.08893, 0, -0.04266, -0.05708, -0.05848], dtype = float)
+y_z5 = np.array([0.21727, 0.08893, 0, -0.04266, -0.05708, -0.05848, -0.05478], dtype = float)
 
 tck_z5 = interpolate.splrep(x, y_z5, k=1, s=0)
 
@@ -140,7 +143,7 @@ axes[1].plot(xnew, interpolate.splev(xnew, tck_z5, der = 1), label = '1st dev')
 for ax in axes:
 	ax.legend(loc = 'best')
 
-plt.show()
+#plt.show()
 
 # PLOTTING ENDED
 
@@ -148,9 +151,9 @@ plt.show()
 #dpsi = 0.0715296
 delta_z = 0.14
 redshift_test = 5.90
-#k_test = 0.0977
+k_test = 0.0977
 
-k_test = 0.0977/2
+#k_test = 0.0977/2
 
 
 #37 in range for zmax = 11
@@ -207,7 +210,7 @@ print 'Result for desired cross power spectrum at zobs = 3.5 is %f\n' % crosspow
 
 def crosspower_z5(redshift, k):
 	result = 0 	
-	zobs_z5 = 3.0
+	zobs_z5 = 4.0
 	for j in range(0,206):
 	#for j in range(0,37):
 		result += interpolate.splev(redshift, tck_z5, der = 1)*crosspower(redshift, k)*Dratio(zobs_z5, redshift)*delta_z
@@ -342,10 +345,56 @@ print 'Comparison of effect at zobs = 3.0 and k = %f is %e \n' % (k_test, final_
 print 'Comparison of effect at zobs = 3.5 and k = %f is %e \n' % (k_test, final_z4)
 print 'Comparison of effect at zobs = 4.0 and k = %f is %e \n' % (k_test, final_z5)
 
-#comparison @mu=0 but with the bias for redshifts that we have them
+#comparison @mu=0 but with the bias for redshifts that we have them. This is from Chris' paper
 r2 = final_z2*(0.122/0.125)
 r3 = final_z3*(0.156/0.201)
 
-
 print 'Comparison of effect with the bias coefficients at zobs = 2.5 and k = %f is %e \n' % (k_test, r2)
 print 'Comparison of effect with the bias coefficients at zobs = 3.0 and k = %f is %e \n' % (k_test, r3)
+
+#here we put the bias coefficients back to the comparison
+#first the flux bias I ignored the negative sign
+bias_F_z1 = 0.12
+bias_F_z2 = 0.18
+bias_F_z3 = 0.27
+bias_F_z4 = 0.37
+bias_F_z5 = 0.55
+
+#now the radiation bias
+bias_G_z1 = (0.087 + 0.087 + 0.085 + 0.084 + 0.084 + 0.083)/6.0
+bias_G_z2 = (0.148 + 0.148 + 0.146 + 0.145 + 0.145 + 0.144)/6.0
+bias_G_z3 = (0.231 + 0.236 + 0.237 + 0.236 + 0.236 + 0.236)/6.0
+bias_G_z4 = (0.332 + 0.346 + 0.354 + 0.356 + 0.356 + 0.357)/6.0
+bias_G_z5 = (0.448 + 0.476 + 0.499 + 0.503 + 0.508 + 0.509)/6.0
+
+print bias_G_z1
+print bias_G_z2
+print bias_G_z3
+print bias_G_z4
+print bias_G_z5
+
+#ratios of the bias
+bias_ratio_z1 = bias_G_z1/bias_F_z1
+bias_ratio_z2 = bias_G_z2/bias_F_z2
+bias_ratio_z3 = bias_G_z3/bias_F_z3
+bias_ratio_z4 = bias_G_z4/bias_F_z4
+bias_ratio_z5 = bias_G_z5/bias_F_z5
+
+print bias_ratio_z1
+print bias_ratio_z2
+print bias_ratio_z3
+print bias_ratio_z4
+print bias_ratio_z5
+
+#final answers with bias now
+comp_z1 = bias_ratio_z1*final_z1
+comp_z2 = bias_ratio_z2*final_z2
+comp_z3 = bias_ratio_z3*final_z3
+comp_z4 = bias_ratio_z4*final_z4
+comp_z5 = bias_ratio_z5*final_z5
+
+print 'Comparison effect with bias ratio at zobs = 2.0 and k = %f is %e \n' % (k_test, comp_z1)
+print 'Comparison effect with bias ratio at zobs = 2.5 and k = %f is %e \n' % (k_test, comp_z2)
+print 'Comparison effect with bias ratio at zobs = 3.0 and k = %f is %e \n' % (k_test, comp_z3)
+print 'Comparison effect with bias ratio at zobs = 3.5 and k = %f is %e \n' % (k_test, comp_z4)
+print 'Comparison effect with bias ratio at zobs = 4.0 and k = %f is %e \n' % (k_test, comp_z5)
