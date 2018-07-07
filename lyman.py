@@ -39,6 +39,7 @@ print Dratio(1, 21)
 
 #*************************************************************************************************************************************
 #load 21cmfast realization 
+#default relizations
 #table = np.loadtxt('power_default1')
 #table = np.loadtxt('power_default2')
 #table = np.loadtxt('power_default3')
@@ -47,10 +48,12 @@ print Dratio(1, 21)
 #table = np.loadtxt('power_default6')
 #table = np.loadtxt('power_default7')
 #table = np.loadtxt('power_default8')
-table = np.loadtxt('power_modelA1')
 
-
-
+#model A realizations
+#table = np.loadtxt('power_modelA1')
+#table = np.loadtxt('power_modelA2')
+#table = np.loadtxt('power_modelA3')
+table = np.loadtxt('power_modelA4')
 
 p_mxh   = table[:,2]
 print p_mxh
@@ -80,7 +83,8 @@ for o in range(0,84):
 	deltaplot_array[o] = crosspower(z_array[o], 0.1)
 	o = o + 1	
 
-np.savetxt('plotdeltamxh_modelA1.dat', np.transpose([z_array, deltaplot_array]), fmt='%e', delimiter=' ')
+np.savetxt('plotdeltamxh_modelA4.dat', np.transpose([z_array, deltaplot_array]), fmt='%e', delimiter=' ')
+#np.savetxt('plotdeltamxh_default1.dat', np.transpose([z_array, deltaplot_array]), fmt='%e', delimiter=' ')
 
 
 
@@ -485,11 +489,13 @@ for m in range(0,16):
 	deltammz5_array[m] = matterpower_z5(k_array[m])
 	m = m + 1	
 
-np.savetxt('plotprueba_modelA1z1.dat', np.transpose([k_array, crossplotz1_array, deltammz1_array]), fmt='%e', delimiter=' ')
-np.savetxt('plotprueba_modelA1z2.dat', np.transpose([k_array, crossplotz2_array, deltammz2_array]), fmt='%e', delimiter=' ')
-np.savetxt('plotprueba_modelA1z3.dat', np.transpose([k_array, crossplotz3_array, deltammz3_array]), fmt='%e', delimiter=' ')
-np.savetxt('plotprueba_modelA1z4.dat', np.transpose([k_array, crossplotz4_array, deltammz4_array]), fmt='%e', delimiter=' ')
-np.savetxt('plotprueba_modelA1z5.dat', np.transpose([k_array, crossplotz5_array, deltammz5_array]), fmt='%e', delimiter=' ')
+#Should I plot something different, like the 1D plot
+
+np.savetxt('plotprueba_modelA4z1.dat', np.transpose([k_array, crossplotz1_array, deltammz1_array]), fmt='%e', delimiter=' ')
+np.savetxt('plotprueba_modelA4z2.dat', np.transpose([k_array, crossplotz2_array, deltammz2_array]), fmt='%e', delimiter=' ')
+np.savetxt('plotprueba_modelA4z3.dat', np.transpose([k_array, crossplotz3_array, deltammz3_array]), fmt='%e', delimiter=' ')
+np.savetxt('plotprueba_modelA4z4.dat', np.transpose([k_array, crossplotz4_array, deltammz4_array]), fmt='%e', delimiter=' ')
+np.savetxt('plotprueba_modelA4z5.dat', np.transpose([k_array, crossplotz5_array, deltammz5_array]), fmt='%e', delimiter=' ')
 #careful, this does not have the minus sign
 #I got what is needed to plot the ration Delta_{m,psi}/Delta_{m,m}, by modifying previous line
 
@@ -627,11 +633,11 @@ for mm in range(0,16):
 	pcrossplotz5_array[mm] = mid_array[9]
 	mm = mm + 1
 
-np.savetxt('plot1Dprueba_modelA1z1.dat', np.transpose([k_array, pcrossplotz1_array, pmm_arrayz1]), fmt='%e', delimiter=' ')
-np.savetxt('plot1Dprueba_modelA1z2.dat', np.transpose([k_array, pcrossplotz2_array, pmm_arrayz2]), fmt='%e', delimiter=' ')
-np.savetxt('plot1Dprueba_modelA1z3.dat', np.transpose([k_array, pcrossplotz3_array, pmm_arrayz3]), fmt='%e', delimiter=' ')
-np.savetxt('plot1Dprueba_modelA1z4.dat', np.transpose([k_array, pcrossplotz4_array, pmm_arrayz4]), fmt='%e', delimiter=' ')
-np.savetxt('plot1Dprueba_modelA1z5.dat', np.transpose([k_array, pcrossplotz5_array, pmm_arrayz5]), fmt='%e', delimiter=' ')
+np.savetxt('plot1Dprueba_modelA4z1.dat', np.transpose([k_array, pcrossplotz1_array, pmm_arrayz1]), fmt='%e', delimiter=' ')
+np.savetxt('plot1Dprueba_modelA4z2.dat', np.transpose([k_array, pcrossplotz2_array, pmm_arrayz2]), fmt='%e', delimiter=' ')
+np.savetxt('plot1Dprueba_modelA4z3.dat', np.transpose([k_array, pcrossplotz3_array, pmm_arrayz3]), fmt='%e', delimiter=' ')
+np.savetxt('plot1Dprueba_modelA4z4.dat', np.transpose([k_array, pcrossplotz4_array, pmm_arrayz4]), fmt='%e', delimiter=' ')
+np.savetxt('plot1Dprueba_modelA4z5.dat', np.transpose([k_array, pcrossplotz5_array, pmm_arrayz5]), fmt='%e', delimiter=' ')
 #again, note that the minus sign from transforming from neutral to ionized is not included in this plots!!!
 
 
@@ -655,24 +661,24 @@ def conver_factor(z):
 	return hubble(z)/(1 + z)
 
 
-obs_table = np.loadtxt('oned_lya_obs.dat')
+obs_table = np.loadtxt('oned_lya_obs_extra.dat')
 
 
 
 #35 data points per redshift
 
-z_obs_array = np.zeros(12)
+z_obs_array = np.zeros(13)
 i = 0
-for i in range(0,12):
-	z_obs_array[i] = 2.2 + 0.2*i
+for i in range(0,13):
+	z_obs_array[i] = 2.0 + 0.2*i
 	i = i + 1
 
 k_obs_array = np.zeros(35)
-p_obs_array = np.zeros(420)
+p_obs_array = np.zeros(455)
 
 mmm = 0 
 nnn = 0
-for mmm in range(0,12):
+for mmm in range(0,13):
 	for nnn in range(0,35):
 		if (mmm == 0):
 			k_obs_array[nnn + 35*mmm] = obs_table[nnn + 35*mmm, 1]
@@ -692,19 +698,21 @@ lya_oned_obs_units = interp2d(z_obs_array, k_obs_array, p_obs_array, kind='cubic
 #print lya_oned_obs_units(2.5,k_test/conver_factor(4.0))/hubble(4.0)
 
 #*******************************************************************************************************************************************
-#let's see the comparison with this observational, no redshift the 2.0
+#let's see the comparison with this observational, no redshift the 2.0 (extrapolated now)
 
 #cannot use the bias ratio since the observed is directly..., so only gamma bias
+#nvm it should have the one factor of flux bias!!!
 
 
-
-onedcomp_obs_z2 = bias_G_z2*onedcomp_array[6]/(lya_oned_obs_units(2.5,k_test/conver_factor(2.5))*1.0/conver_factor(2.5))*(-200)
-onedcomp_obs_z3 = bias_G_z3*onedcomp_array[7]/(lya_oned_obs_units(3.0,k_test/conver_factor(3.0))*1.0/conver_factor(3.0))*(-200)
-onedcomp_obs_z4 = bias_G_z4*onedcomp_array[8]/(lya_oned_obs_units(3.5,k_test/conver_factor(3.5))*1.0/conver_factor(3.5))*(-200)
-onedcomp_obs_z5 = bias_G_z5*onedcomp_array[9]/(lya_oned_obs_units(4.0,k_test/conver_factor(4.0))*1.0/conver_factor(4.0))*(-200)
+onedcomp_obs_z1 = bias_F_z1*bias_G_z1*onedcomp_array[5]/(lya_oned_obs_units(2.0,k_test/conver_factor(2.0))*1.0/conver_factor(2.0))*(-200)
+onedcomp_obs_z2 = bias_F_z2*bias_G_z2*onedcomp_array[6]/(lya_oned_obs_units(2.5,k_test/conver_factor(2.5))*1.0/conver_factor(2.5))*(-200)
+onedcomp_obs_z3 = bias_F_z3*bias_G_z3*onedcomp_array[7]/(lya_oned_obs_units(3.0,k_test/conver_factor(3.0))*1.0/conver_factor(3.0))*(-200)
+onedcomp_obs_z4 = bias_F_z4*bias_G_z4*onedcomp_array[8]/(lya_oned_obs_units(3.5,k_test/conver_factor(3.5))*1.0/conver_factor(3.5))*(-200)
+onedcomp_obs_z5 = bias_F_z5*bias_G_z5*onedcomp_array[9]/(lya_oned_obs_units(4.0,k_test/conver_factor(4.0))*1.0/conver_factor(4.0))*(-200)
 
 print '*********************************************************************************************************'
 print 'OBSERVATION HERE:'
+print 'Comparison effect for 1D with bias ratio at zobs = 2.0 and k = %f is %e \n' % (k_test, onedcomp_obs_z1)
 print 'Comparison effect for 1D with bias ratio at zobs = 2.5 and k = %f is %e \n' % (k_test, onedcomp_obs_z2)
 print 'Comparison effect for 1D with bias ratio at zobs = 3.0 and k = %f is %e \n' % (k_test, onedcomp_obs_z3)
 print 'Comparison effect for 1D with bias ratio at zobs = 3.5 and k = %f is %e \n' % (k_test, onedcomp_obs_z4)
@@ -723,32 +731,47 @@ print 'Comparison effect for 1D with bias ratio at zobs = 4.0 and k = %f is %e \
 #these guys are in Mpc^-1
 k_oned_array = [9.60e-02, 0.0997, 1.2e-01, 1.5e-01, 2.0e-01, 2.5e-01, 3.0e-01, 3.5e-01, 4.0e-01, 4.5e-01, 5.0e-01, 5.5e-01, 6.0e-01, 6.5e-01, 7.0e-01, 7.5e-01, 8.0e-01, 8.5e-01, 9.0e-01, 9.5e-01, 1.0, 1.25]
 
+power_oned_arrayz1 = np.zeros(22)
 power_oned_arrayz2 = np.zeros(22)
 power_oned_arrayz3 = np.zeros(22)
 power_oned_arrayz4 = np.zeros(22)
 power_oned_arrayz5 = np.zeros(22)
+power_cross_oned_plotz1_array = np.zeros(22)
 power_cross_oned_plotz2_array = np.zeros(22)
 power_cross_oned_plotz3_array = np.zeros(22)
 power_cross_oned_plotz4_array = np.zeros(22)
 power_cross_oned_plotz5_array = np.zeros(22)
+cross_bias_1d_plotz1_array = np.zeros(22)
+cross_bias_1d_plotz2_array = np.zeros(22)
+cross_bias_1d_plotz3_array = np.zeros(22)
+cross_bias_1d_plotz4_array = np.zeros(22)
+cross_bias_1d_plotz5_array = np.zeros(22)
 mid_point_array = np.zeros(10)
 p1 = 0
 for p1 in range(0,22):
+	power_oned_arrayz1[p1] = lya_oned_obs_units(2.0,k_oned_array[p1]/conver_factor(2.0))/conver_factor(2.0)
 	power_oned_arrayz2[p1] = lya_oned_obs_units(2.5,k_oned_array[p1]/conver_factor(2.5))/conver_factor(2.5)
 	power_oned_arrayz3[p1] = lya_oned_obs_units(3.0,k_oned_array[p1]/conver_factor(3.0))/conver_factor(3.0)
 	power_oned_arrayz4[p1] = lya_oned_obs_units(3.5,k_oned_array[p1]/conver_factor(3.5))/conver_factor(3.5)
 	power_oned_arrayz5[p1] = lya_oned_obs_units(4.0,k_oned_array[p1]/conver_factor(4.0))/conver_factor(4.0)
 	mid_point_array = integralisimo(k_oned_array[p1])
+	power_cross_oned_plotz1_array[p1] = mid_point_array[5]
 	power_cross_oned_plotz2_array[p1] = mid_point_array[6]
 	power_cross_oned_plotz3_array[p1] = mid_point_array[7]
 	power_cross_oned_plotz4_array[p1] = mid_point_array[8]
 	power_cross_oned_plotz5_array[p1] = mid_point_array[9]
+	cross_bias_1d_plotz1_array[p1] = 2*bias_F_z1*bias_G_z1*mid_point_array[5]
+	cross_bias_1d_plotz2_array[p1] = 2*bias_F_z2*bias_G_z2*mid_point_array[6]
+	cross_bias_1d_plotz3_array[p1] = 2*bias_F_z3*bias_G_z3*mid_point_array[7]
+	cross_bias_1d_plotz4_array[p1] = 2*bias_F_z4*bias_G_z4*mid_point_array[8]
+	cross_bias_1d_plotz5_array[p1] = 2*bias_F_z5*bias_G_z5*mid_point_array[9]
 	p1 = p1 + 1
 
-np.savetxt('plot1D_obs_lya_modelA1z2.dat', np.transpose([k_oned_array, power_cross_oned_plotz2_array, power_oned_arrayz2]), fmt='%e', delimiter=' ')
-np.savetxt('plot1D_obs_lya_modelA1z3.dat', np.transpose([k_oned_array, power_cross_oned_plotz3_array, power_oned_arrayz3]), fmt='%e', delimiter=' ')
-np.savetxt('plot1D_obs_lya_modelA1z4.dat', np.transpose([k_oned_array, power_cross_oned_plotz4_array, power_oned_arrayz4]), fmt='%e', delimiter=' ')
-np.savetxt('plot1D_obs_lya_modelA1z5.dat', np.transpose([k_oned_array, power_cross_oned_plotz5_array, power_oned_arrayz5]), fmt='%e', delimiter=' ')
+np.savetxt('plot1D_obs_lya_modelA4z1.dat', np.transpose([k_oned_array, power_cross_oned_plotz1_array, power_oned_arrayz1, cross_bias_1d_plotz1_array]), fmt='%e', delimiter=' ')
+np.savetxt('plot1D_obs_lya_modelA4z2.dat', np.transpose([k_oned_array, power_cross_oned_plotz2_array, power_oned_arrayz2, cross_bias_1d_plotz2_array]), fmt='%e', delimiter=' ')
+np.savetxt('plot1D_obs_lya_modelA4z3.dat', np.transpose([k_oned_array, power_cross_oned_plotz3_array, power_oned_arrayz3, cross_bias_1d_plotz3_array]), fmt='%e', delimiter=' ')
+np.savetxt('plot1D_obs_lya_modelA4z4.dat', np.transpose([k_oned_array, power_cross_oned_plotz4_array, power_oned_arrayz4, cross_bias_1d_plotz4_array]), fmt='%e', delimiter=' ')
+np.savetxt('plot1D_obs_lya_modelA4z5.dat', np.transpose([k_oned_array, power_cross_oned_plotz5_array, power_oned_arrayz5, cross_bias_1d_plotz5_array]), fmt='%e', delimiter=' ')
 #again, note that the minus sign from transforming from neutral to ionized is not included in this plots!!!
 
 

@@ -5,7 +5,7 @@ import glob
 import sys
 
 # this guy combines all tables into one for one realization
-path = r'/home/yoshi/21cmFAST-master/Log_files_default1/crosspower/'
+path = r'/home/yoshi/21cmFAST-master/Log_files_modelA4/crosspower/'
 allFiles = sorted(glob.glob(path + "/*.dat"))
 frame =pd.DataFrame()
 list_ = []
@@ -27,6 +27,6 @@ frame = pd.concat(list_)
 #result = pd.concat(frames)
 
 #MAKE SURE  TO CHANGE THE OUTPUT
-np.savetxt('power_default1', frame, fmt='%e')
+np.savetxt('power_modelA4', frame, fmt='%e')
 
 
